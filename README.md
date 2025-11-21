@@ -2,5 +2,5 @@
 
 - Your student ID: **23BA14056**
 - Your name: **Nguyen Minh Duc**
-- Your class:**ICT2**
+- Your class: **ICT2**
 
