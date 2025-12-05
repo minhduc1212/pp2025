@@ -81,7 +81,6 @@ class Mark:
 
 
 def main():
-    print("pls enter the number of students: ")
     num_students = int(input("Enter number of students: "))
     students = []
     for i in range(num_students):
@@ -91,8 +90,7 @@ def main():
         student = Student(name, id, DoB)
         student.input(name, id, DoB)
         students.append(student)
-    
-    print("pls enter the number of courses: ")
+
     num_courses = int(input("Enter number of courses: "))
     courses = []
     for i in range(num_courses):
