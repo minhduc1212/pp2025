@@ -160,7 +160,6 @@ class StudentMarkManager:
         print(f"\nMarks for course {selected_course.get_name()} recorded.")
 
     def list_courses(self):
-        """Lists all stored courses."""
         if not self._courses:
             print("No courses available.")
             return
@@ -170,17 +169,15 @@ class StudentMarkManager:
             print(course.list()) # Polymorphism: calling .list() on Course object
 
     def list_students(self):
-        """Lists all stored students."""
         if not self._students:
             print("No students available.")
             return
 
         print("\n--- Student List ---")
         for student in self._students:
-            print(student.list()) # Polymorphism: calling .list() on Student object
+            print(student.list()) 
 
     def show_student_marks_for_course(self):
-        """Shows marks for all students in a given course."""
         if not self._courses:
             print("No courses available. Please input courses first.")
             return
