@@ -1,16 +1,5 @@
 import math
 import numpy as np
-class Person:
-    def __init__(self, id, name, dob):
-        self._id = id
-        self._name = name
-        self._dob = dob
-
-    def list(self):
-        return f"ID: {self._id}, Name: {self._name}, DoB: {self._dob}"
-
-    def get_id(self):
-        return self._id
 
 class Course:
     def __init__(self, id, name, credits):
@@ -27,14 +16,22 @@ class Course:
     def get_credits(self):
         return self._credits
 
-    def list(self):
+    def list_info(self):
         return f"ID: {self._id}, Name: {self._name}, Credits: {self._credits}"
 
-class Student(Person):
+class Student:
     def __init__(self, id, name, dob):
-        super().__init__(id, name, dob)
+        self._id = id
+        self._name = name
+        self._dob = dob
         self.marks = {}
         self._gpa = None 
+        
+    def get_id(self):
+        return self._id
+
+    def get_name(self):
+        return self._name
         
     def set_mark(self, course_id, mark):
         rounded_mark = math.floor(mark * 10) / 10
@@ -58,7 +55,6 @@ class Student(Person):
             return 0.0
 
         data_array = np.array(marks_credits_data, dtype=[('mark', float), ('credit', int)])
-        
         marks = data_array['mark']
         credits = data_array['credit']
         
@@ -78,21 +74,19 @@ class Student(Person):
             return self.calculate_gpa(all_courses)
         return self._gpa
 
-    def list(self, include_gpa=False, all_courses=None):
-        """Displays student info, optionally including GPA."""
-        base_info = super().list()
+    def display_info(self, include_gpa=False, all_courses=None):
+        base_info = f"ID: {self._id}, Name: {self._name}, DoB: {self._dob}"
         if include_gpa and all_courses is not None:
             gpa = self.get_gpa(all_courses)
             return f"{base_info}, GPA: {gpa:.2f}"
         return base_info
 
 class StudentMarkManager:
-    """Manages all students and courses."""
     def __init__(self):
         self._students = []
         self._courses = []
-    def _get_number_of_items(item_type):
-        """Helper to safely get the number of items to input."""
+
+    def _get_number_of_items(self, item_type):
         while True:
             try:
                 num = int(input(f"Enter number of {item_type} to input: "))
@@ -120,13 +114,10 @@ class StudentMarkManager:
 
         for i in range(num_students):
             print(f"\n--- Input Student {i+1} Details ---")
-            
             all_current_students = self._students + temp_students
             student_id = self._get_unique_id("Enter student ID: ", all_current_students)
-            
             student_name = input("Enter student Name: ")
             student_dob = input("Enter student Date of Birth (e.g., DD/MM/YYYY): ")
-            
             new_student = Student(student_id, student_name, student_dob)
             temp_students.append(new_student)
             
@@ -134,17 +125,13 @@ class StudentMarkManager:
         print(f"\n\033[92m{len(temp_students)} students added.\033[0m")
 
     def input_courses(self):
-        """Input number of courses and their details, with unique ID and credits validation."""
         num_courses = self._get_number_of_items("courses")
         temp_courses = [] 
 
         for i in range(num_courses):
             print(f"\n--- Input Course {i+1} Details ---")
-            
             all_current_courses = self._courses + temp_courses
             course_id = self._get_unique_id("Enter course ID: ", all_current_courses)
-            
-    
             course_name = input("Enter course Name: ")
             while True:
                 try:
@@ -161,7 +148,6 @@ class StudentMarkManager:
             
         self._courses.extend(temp_courses)
         print(f"\n\033[92m{len(temp_courses)} courses added.\033[0m")
-
 
     def select_course_and_input_marks(self):
         if not self._courses:
@@ -186,8 +172,8 @@ class StudentMarkManager:
         for student in self._students:
             while True:
                 try:
-                    mark = float(input(f"Enter mark for student {student.get_id()} ({student._name}): "))
-                    if 0.0 <= mark <= 20.0:  # Assuming marks are 0-20
+                    mark = float(input(f"Enter mark for student {student.get_id()} ({student.get_name()}): "))
+                    if 0.0 <= mark <= 20.0:
                         student.set_mark(course_id, mark)
                         print(f"   -> Mark recorded (floored to 1-digit): \033[93m{student.get_mark(course_id)}\033[0m")
                         break
@@ -202,19 +188,17 @@ class StudentMarkManager:
         if not self._courses:
             print("No courses available.")
             return
-
         print("\n--- Course List (ID | Name | Credits) ---")
         for course in self._courses:
-            print(course.list()) 
+            print(course.list_info()) 
 
     def list_students(self):
         if not self._students:
             print("No students available.")
             return
-
         print("\n--- Student List (ID | Name | DoB) ---")
         for student in self._students:
-            print(student.list())
+            print(student.display_info())
 
     def sort_and_list_students_by_gpa(self):
         if not self._students:
@@ -240,7 +224,7 @@ class StudentMarkManager:
             gpa = student.get_gpa(self._courses)
             print("{:<10} {:<20} {:<15} {:>5.2f}".format(
                 student.get_id(), 
-                student._name, 
+                student.get_name(), 
                 student._dob, 
                 gpa
             ))
@@ -271,7 +255,7 @@ class StudentMarkManager:
         for student in self._students:
             mark = student.get_mark(course_id)
             mark_display = f"\033[93m{mark}\033[0m" if mark != "N/A" else mark
-            print("{:<10} {:<20} {:>5}".format(student.get_id(), student._name, mark_display))
+            print("{:<10} {:<20} {:>5}".format(student.get_id(), student.get_name(), mark_display))
             if mark != "N/A":
                 found_marks = True
         
@@ -280,29 +264,23 @@ class StudentMarkManager:
 
 def display_menu():
     print("\n\n" + "=" * 50)
-    print("|\t\t\t\t\t\t |")
-    print("|\t\033[1;36mSTUDENT MARK MANAGEMENT SYSTEM|\t\033[1;36m")
-    print("|\t\t\t\t\t\t |")
+    print("          Student Mark Management System          ")
     print("=" * 50)
-    print("  --- \033[92mINPUT FUNCTIONS\033[0m ---")
-    print("  1. Input number of students and their details")
-    print("  2. Input number of courses and their details (\033[3mincluding credits\033[0m)")
-    print("  3. Select a course and input marks (\033[3mfloored to 1-digit\033[0m)")
-    print("  --- \033[92mLISTING & ANALYSIS FUNCTIONS\033[0m ---")
+    print("  1. Input students")
+    print("  2. Input courses")
+    print("  3. Input marks")
     print("  4. List courses")
-    print("  5. List students (basic)")
-    print("  6. Show student marks for a given course")
-    print("  7. \033[93mSort and List students by GPA (Descending)\033[0m")
-    print("  0. \033[91mExit\033[0m")
+    print("  5. List students")
+    print("  6. Show marks for a course")
+    print("  7. Sort by GPA")
+    print("  0. Exit")
     print("=" * 50)
 
 def main():
     manager = StudentMarkManager()
-
     while True:
         display_menu()
         choice = input("Enter your choice (0-7): ")
-
         if choice == '1':
             manager.input_students()
         elif choice == '2':
@@ -318,10 +296,9 @@ def main():
         elif choice == '7':
             manager.sort_and_list_students_by_gpa()
         elif choice == '0':
-            print("\n\033[91mExiting Student Mark Management System. Goodbye!\033[0m")
             break
         else:
-            print("\n\033[91mInvalid choice. Please enter a number between 0 and 7.\033[0m")
+            print("Invalid choice.")
 
 if __name__ == "__main__":
     main()

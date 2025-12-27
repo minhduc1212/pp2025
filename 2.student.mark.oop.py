@@ -1,38 +1,24 @@
-class Person:
-    """A base class for people, demonstrating a common structure."""
+class Student:
     def __init__(self, id, name, dob):
         self._id = id       
         self._name = name
         self._dob = dob
-
-    def list(self):
-        """Illustrates a polymorphic list/display method."""
-        return f"ID: {self._id}, Name: {self._name}, DoB: {self._dob}"
+        self.marks = {}
 
     def get_id(self):
         return self._id
 
-class Student(Person):
-    """Represents a student with marks for various courses."""
-    def __init__(self, id, name, dob):
-        super().__init__(id, name, dob)
-        self.marks = {}
-
     def set_mark(self, course_id, mark):
-        """Sets or updates a mark for a specific course."""
         self.marks[course_id] = mark
 
     def get_mark(self, course_id):
-        """Retrieves a mark for a specific course."""
         return self.marks.get(course_id, "N/A")
 
     def list(self):
-        """Overrides list to include the base info."""
-        return super().list()
+        return f"ID: {self._id}, Name: {self._name}, DoB: {self._dob}"
 
     @staticmethod
     def input():
-        """Illustrates a polymorphic input method (as a class method for creation)."""
         while True:
             student_id = input("Enter student ID: ")
             if student_id: break
@@ -42,7 +28,6 @@ class Student(Person):
         return Student(student_id, student_name, student_dob)
 
 class Course:
-    """Represents a course."""
     def __init__(self, id, name):
         self._id = id
         self._name = name
@@ -54,12 +39,10 @@ class Course:
         return self._name
 
     def list(self):
-        """Illustrates a polymorphic list/display method."""
         return f"ID: {self._id}, Name: {self._name}"
 
     @staticmethod
     def input():
-        """Illustrates a polymorphic input method (as a class method for creation)."""
         while True:
             course_id = input("Enter course ID: ")
             if course_id: break
@@ -136,7 +119,7 @@ class StudentMarkManager:
             while True:
                 try:
                     mark = float(input(f"Enter mark for student {student.get_id()} ({student._name}): "))
-                    if 0.0 <= mark <= 20.0:  # Assuming marks are 0-20
+                    if 0.0 <= mark <= 20.0:
                         student.set_mark(course_id, mark)
                         break
                     else:
@@ -150,16 +133,14 @@ class StudentMarkManager:
         if not self._courses:
             print("No courses available.")
             return
-
         print("\n--- Course List ---")
         for course in self._courses:
-            print(course.list()) # Polymorphism: calling .list() on Course object
+            print(course.list())
 
     def list_students(self):
         if not self._students:
             print("No students available.")
             return
-
         print("\n--- Student List ---")
         for student in self._students:
             print(student.list()) 
@@ -196,27 +177,24 @@ class StudentMarkManager:
         if not found_marks:
              print("\nNo marks have been recorded for this course yet.")
 
-
 def display_menu():
-    print("      Student Mark Management System    ")
-    print("  --- Input Functions ---")
-    print("  1. Input number of students and their details")
-    print("  2. Input number of courses and their details")
-    print("  3. Select a course and input marks")
-    print("  --- Listing Functions ---")
+    print("\n\n" + "=" * 50)
+    print("          Student Mark Management System          ")
+    print("=" * 50)
+    print("  1. Input students")
+    print("  2. Input courses")
+    print("  3. Input marks")
     print("  4. List courses")
     print("  5. List students")
-    print("  6. Show student marks for a given course")
+    print("  6. Show marks for a course")
     print("  0. Exit")
-    print("==============================================")
+    print("=" * 50)
 
 def main():
     manager = StudentMarkManager()
-
     while True:
         display_menu()
         choice = input("Enter your choice (0-6): ")
-
         if choice == '1':
             manager.input_students()
         elif choice == '2':
