@@ -68,20 +68,11 @@ class Course:
         return Course(course_id, course_name)
 
 class StudentMarkManager:
-    """
-    Manages all students and courses.
-    Acts as the main controller, demonstrating proper encapsulation 
-    by controlling access to student and course lists.
-    """
     def __init__(self):
-        # Encapsulation: internal storage for data
         self._students = []
         self._courses = []
 
-    # --- Input Functions ---
-
     def input_students(self):
-        """Input number of students and their details."""
         while True:
             try:
                 num_students = int(input("Enter number of students in the class: "))
@@ -95,7 +86,6 @@ class StudentMarkManager:
         for i in range(num_students):
             print(f"\n--- Input Student {i+1} Details ---")
             new_student = Student.input()
-            # Check for ID uniqueness (simple check for demonstration)
             if any(s.get_id() == new_student.get_id() for s in self._students):
                 print(f"Warning: Student with ID {new_student.get_id()} already exists. Skipping.")
                 continue
@@ -103,7 +93,6 @@ class StudentMarkManager:
         print(f"\n{len(self._students)} students added.")
 
     def input_courses(self):
-        """Input number of courses and their details."""
         while True:
             try:
                 num_courses = int(input("Enter number of courses: "))
@@ -117,7 +106,6 @@ class StudentMarkManager:
         for i in range(num_courses):
             print(f"\n--- Input Course {i+1} Details ---")
             new_course = Course.input()
-            # Check for ID uniqueness
             if any(c.get_id() == new_course.get_id() for c in self._courses):
                 print(f"Warning: Course with ID {new_course.get_id()} already exists. Skipping.")
                 continue
@@ -125,7 +113,6 @@ class StudentMarkManager:
         print(f"\n{len(self._courses)} courses added.")
 
     def select_course_and_input_marks(self):
-        """Select a course and input marks for all students in that course."""
         if not self._courses:
             print("No courses available. Please input courses first.")
             return
@@ -224,7 +211,6 @@ def display_menu():
     print("==============================================")
 
 def main():
-    """Main function to run the application."""
     manager = StudentMarkManager()
 
     while True:

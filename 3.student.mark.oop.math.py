@@ -1,33 +1,22 @@
-# File: 3.student.mark.oop.math.py
-
 import math
 import numpy as np
-import sys
-# Note: The 'curses' module is skipped for full UI in this environment, 
-# but text-based decoration is used instead (ANSI escape codes).
-
-# --- Base Classes ---
-
 class Person:
-    """A base class for people."""
     def __init__(self, id, name, dob):
         self._id = id
         self._name = name
         self._dob = dob
 
     def list(self):
-        """Displays base information."""
         return f"ID: {self._id}, Name: {self._name}, DoB: {self._dob}"
 
     def get_id(self):
         return self._id
 
 class Course:
-    """Represents a course with credits (for GPA calculation)."""
     def __init__(self, id, name, credits):
         self._id = id
         self._name = name
-        self._credits = credits # New attribute for GPA calculation
+        self._credits = credits 
 
     def get_id(self):
         return self._id
@@ -39,37 +28,23 @@ class Course:
         return self._credits
 
     def list(self):
-        """Displays course information including credits."""
         return f"ID: {self._id}, Name: {self._name}, Credits: {self._credits}"
 
-# STATIC .input() METHOD IS REMOVED/NOT USED TO AVOID LOGIC FLAW IN MANAGER
-
 class Student(Person):
-    """Represents a student with marks and GPA calculation."""
     def __init__(self, id, name, dob):
         super().__init__(id, name, dob)
-        # Marks will be stored as {course_id: mark_value}
         self.marks = {}
-        self._gpa = None # Encapsulation: store GPA after calculation
-
+        self._gpa = None 
+        
     def set_mark(self, course_id, mark):
-        """Sets or updates a mark for a specific course (with floor rounding)."""
-        # Use math.floor() to round down the score to 1-digit decimal
         rounded_mark = math.floor(mark * 10) / 10
         self.marks[course_id] = rounded_mark
-        # Reset GPA when marks change
         self._gpa = None 
 
     def get_mark(self, course_id):
-        """Retrieves a mark for a specific course."""
         return self.marks.get(course_id, "N/A")
 
     def calculate_gpa(self, all_courses):
-        """
-        Use numpy array to calculate weighted average GPA.
-        GPA = (Sum of Mark * Credit) / (Sum of Credit)
-        """
-        
         marks_credits_data = []
         for course in all_courses:
             course_id = course.get_id()
@@ -82,7 +57,6 @@ class Student(Person):
             self._gpa = 0.0
             return 0.0
 
-        # Convert to numpy array for efficient calculation
         data_array = np.array(marks_credits_data, dtype=[('mark', float), ('credit', int)])
         
         marks = data_array['mark']
@@ -100,7 +74,6 @@ class Student(Person):
         return self._gpa
 
     def get_gpa(self, all_courses):
-        """Returns stored GPA or calculates it if necessary."""
         if self._gpa is None:
             return self.calculate_gpa(all_courses)
         return self._gpa
@@ -112,8 +85,6 @@ class Student(Person):
             gpa = self.get_gpa(all_courses)
             return f"{base_info}, GPA: {gpa:.2f}"
         return base_info
-
-# --- Manager Class (Logic Fix Applied) ---
 
 class StudentMarkManager:
     """Manages all students and courses."""
@@ -133,7 +104,6 @@ class StudentMarkManager:
                 print("Invalid input. Please enter a number.")
 
     def _get_unique_id(self, prompt, existing_items):
-        """Helper to get a unique ID, checking against a list of existing items."""
         while True:
             item_id = input(prompt)
             if not item_id:
@@ -143,22 +113,17 @@ class StudentMarkManager:
                 print(f"\033[91mError: ID '{item_id}' already exists.\033[0m Please enter a unique ID.")
                 continue
             return item_id
-            
-    # --- Input Functions (Logic Fixed) ---
-
+        
     def input_students(self):
-        """Input number of students and their details, with unique ID validation."""
         num_students = self._get_number_of_items("students")
-        temp_students = [] # To check for duplicates within the current batch
+        temp_students = []
 
         for i in range(num_students):
             print(f"\n--- Input Student {i+1} Details ---")
             
-            # Use the helper to get a unique ID against existing and current batch students
             all_current_students = self._students + temp_students
             student_id = self._get_unique_id("Enter student ID: ", all_current_students)
             
-            # Get remaining details (no need for a static Student.input() now)
             student_name = input("Enter student Name: ")
             student_dob = input("Enter student Date of Birth (e.g., DD/MM/YYYY): ")
             
@@ -171,16 +136,15 @@ class StudentMarkManager:
     def input_courses(self):
         """Input number of courses and their details, with unique ID and credits validation."""
         num_courses = self._get_number_of_items("courses")
-        temp_courses = [] # To check for duplicates within the current batch
+        temp_courses = [] 
 
         for i in range(num_courses):
             print(f"\n--- Input Course {i+1} Details ---")
             
-            # Use the helper to get a unique ID against existing and current batch courses
             all_current_courses = self._courses + temp_courses
             course_id = self._get_unique_id("Enter course ID: ", all_current_courses)
             
-            # Get remaining details (no need for a static Course.input() now)
+    
             course_name = input("Enter course Name: ")
             while True:
                 try:
@@ -200,8 +164,6 @@ class StudentMarkManager:
 
 
     def select_course_and_input_marks(self):
-        """Select a course and input marks for all students, using math.floor()."""
-        # ... (Rest of the logic is kept as it was correct for mark input and floor rounding) ...
         if not self._courses:
             print("No courses available. Please input courses first.")
             return
@@ -236,10 +198,7 @@ class StudentMarkManager:
         
         print(f"\nMarks for course {selected_course.get_name()} recorded.")
 
-    # --- Listing Functions (Kept as they were correct) ---
-
     def list_courses(self):
-        """Lists all stored courses."""
         if not self._courses:
             print("No courses available.")
             return
@@ -249,7 +208,6 @@ class StudentMarkManager:
             print(course.list()) 
 
     def list_students(self):
-        """Lists all stored students."""
         if not self._students:
             print("No students available.")
             return
@@ -259,7 +217,6 @@ class StudentMarkManager:
             print(student.list())
 
     def sort_and_list_students_by_gpa(self):
-        """Sort student list by GPA descending and list them."""
         if not self._students:
             print("No students available.")
             return
@@ -289,7 +246,6 @@ class StudentMarkManager:
             ))
 
     def show_student_marks_for_course(self):
-        """Shows marks for all students in a given course."""
         if not self._courses:
             print("No courses available. Please input courses first.")
             return
@@ -314,7 +270,6 @@ class StudentMarkManager:
         found_marks = False
         for student in self._students:
             mark = student.get_mark(course_id)
-            # Decorate the mark display
             mark_display = f"\033[93m{mark}\033[0m" if mark != "N/A" else mark
             print("{:<10} {:<20} {:>5}".format(student.get_id(), student._name, mark_display))
             if mark != "N/A":
@@ -324,7 +279,6 @@ class StudentMarkManager:
              print("\nNo marks have been recorded for this course yet.")
 
 def display_menu():
-    """Decorated menu display (text-based decoration with ANSI escape codes)."""
     print("\n\n" + "=" * 50)
     print("|\t\t\t\t\t\t |")
     print("|\t\033[1;36mSTUDENT MARK MANAGEMENT SYSTEM|\t\033[1;36m")
@@ -343,7 +297,6 @@ def display_menu():
     print("=" * 50)
 
 def main():
-    """Main function to run the application."""
     manager = StudentMarkManager()
 
     while True:
